@@ -2,6 +2,7 @@ package manage
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/go-oauth2/oauth2/v4"
@@ -167,6 +168,7 @@ func (m *Manager) GenerateAuthToken(ctx context.Context, rt oauth2.ResponseType,
 	}
 	switch rt {
 	case oauth2.Code:
+		log.Println("manager.go in oauth2.Code...................")
 		codeExp := m.codeExp
 		if codeExp == 0 {
 			codeExp = DefaultCodeExp
@@ -187,6 +189,7 @@ func (m *Manager) GenerateAuthToken(ctx context.Context, rt oauth2.ResponseType,
 		}
 		ti.SetCode(tv)
 	case oauth2.Token:
+		log.Println("manager.go in oauth2.Token(...................")
 		// set access token expires
 		icfg := m.grantConfig(oauth2.Implicit)
 		aexp := icfg.AccessTokenExp
@@ -279,6 +282,7 @@ func (m *Manager) validateCodeChallenge(ti oauth2.TokenInfo, ver string) error {
 
 // GenerateAccessToken generate the access token
 func (m *Manager) GenerateAccessToken(ctx context.Context, gt oauth2.GrantType, tgr *oauth2.TokenGenerateRequest) (oauth2.TokenInfo, error) {
+	log.Println("manager.go GenerateAccessToken:... ")
 	cli, err := m.GetClient(ctx, tgr.ClientID)
 	if err != nil {
 		return nil, err
@@ -345,6 +349,7 @@ func (m *Manager) GenerateAccessToken(ctx context.Context, gt oauth2.GrantType, 
 	}
 
 	av, rv, err := m.accessGenerate.Token(ctx, td, gcfg.IsGenerateRefresh)
+	log.Println("manager.go this is the token: ", av)
 	if err != nil {
 		return nil, err
 	}
@@ -354,10 +359,12 @@ func (m *Manager) GenerateAccessToken(ctx context.Context, gt oauth2.GrantType, 
 		ti.SetRefresh(rv)
 	}
 
+	log.Println("manager.go generate access token:.... ", ti)
 	err = m.tokenStore.Create(ctx, ti)
 	if err != nil {
 		return nil, err
 	}
+	log.Println("The token store is not activate look like........")
 
 	return ti, nil
 }
@@ -461,6 +468,7 @@ func (m *Manager) RemoveRefreshToken(ctx context.Context, refresh string) error 
 
 // LoadAccessToken according to the access token for corresponding token information
 func (m *Manager) LoadAccessToken(ctx context.Context, access string) (oauth2.TokenInfo, error) {
+	log.Println("manager.go load by access")
 	if access == "" {
 		return nil, errors.ErrInvalidAccessToken
 	}

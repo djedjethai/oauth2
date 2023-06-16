@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"time"
 
 	"github.com/go-oauth2/oauth2/v4"
@@ -32,11 +33,13 @@ type TokenStore struct {
 
 // Create create and store the new token information
 func (ts *TokenStore) Create(ctx context.Context, info oauth2.TokenInfo) error {
+	log.Println("token.go Create:... ", info)
 	ct := time.Now()
 	jv, err := json.Marshal(info)
 	if err != nil {
 		return err
 	}
+	log.Println("token.go Create see jv:... ", jv)
 
 	return ts.db.Update(func(tx *buntdb.Tx) error {
 		if code := info.GetCode(); code != "" {
@@ -137,6 +140,7 @@ func (ts *TokenStore) getBasicID(key string) (string, error) {
 		}
 		return "", err
 	}
+	log.Println("token.go in getBasicID", basicID)
 	return basicID, nil
 }
 

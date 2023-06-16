@@ -322,6 +322,7 @@ func outputHTML(w http.ResponseWriter, req *http.Request, filename string) {
 	tk := ""
 	t, ok := globalTokens[email]
 	if ok {
+		log.Println("The t.AccessToken: ", t.AccessToken)
 		tk = t.AccessToken
 	}
 
